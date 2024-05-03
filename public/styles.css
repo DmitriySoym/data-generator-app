@@ -1,0 +1,16 @@
+body {
+  background-color: white;
+}
+
+.title {
+  text-align: center;
+}
+
+.region_select {
+  width: 8rem;
+  text-align: center;
+}
+
+.input__range {
+  width: 13rem;
+}
