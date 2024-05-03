@@ -46,7 +46,8 @@ document.addEventListener("DOMContentLoaded", () => {
       .then((data) => {
         userData = data;
         console.log(userData);
-      });
+      })
+      .then(renderTable);
   }
 
   //   function fetchData() {
@@ -65,4 +66,25 @@ document.addEventListener("DOMContentLoaded", () => {
   //   }
 
   fetchData();
+
+  async function renderTable() {
+    if (userData === undefined) return;
+    else {
+      const table = document.querySelector(".users__table");
+
+      for (let i = 0; i < userData.length; i++) {
+        const tableItem = document.createElement("li");
+        tableItem.classList.add("users__table-item");
+        if (i % 2 === 0) tableItem.classList.add("users__table-item--even");
+        tableItem.innerHTML = `
+            <span class="user__number">${userData[i].number}</span>
+            <div class="users__table-item-text">${userData[i].ID}</div>
+            <div class="users__table-item-text">${userData[i].name}</div>
+            <div class="users__table-item-text">${userData[i].adress}</div>
+            <div class="users__table-item-text">${userData[i].phone}</div>
+        `;
+        table.appendChild(tableItem);
+      }
+    }
+  }
 });
