@@ -4,7 +4,7 @@
 
 {% block body %}
     <h1 class="title pb-3">Data generator</h1>
-    <div class="container">
+    <div class="container pb-3">
         <div class="d-flex justify-content-between">
             <div class="d-flex gap-2">
                 <label>Region:</label>
@@ -30,4 +30,26 @@
             <button class="btn mr-5 btn-success">Export</button>
         </div>
     </div>
+
+    <table class="table table-striped container">
+            <thead class="thead-dark">
+            <tr class="text-center">
+                <th>#</th>
+                <th>User ID</th>
+                <th>Name</th>
+                <th>Adress</th>
+                <th>Phone</th>
+            </tr>
+            </thead>
+            <tbody>
+            {# {% for user in userData %}
+                <tr>
+                    <td>{{ user.number }}</td>
+                    <td>{{ user.ID }}</td>
+                    <td>{{ user.name }}</td>
+                    <td>{{ user.adress }}</td>
+                </tr>
+            {% endfor %} #}
+            </tbody>
+        </table>
 {% endblock %}

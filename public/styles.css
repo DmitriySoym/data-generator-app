@@ -14,3 +14,7 @@ body {
 .input__range {
   width: 13rem;
 }
+
+.user__numbe {
+  width: 10px;
+}
