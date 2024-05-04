@@ -13,31 +13,22 @@ class DataGeneratorController extends AbstractController
     #[Route('/data/generator', name: 'app_data_generator')]
     public function index(Request $request): JsonResponse
     {
-        $faker = Factory::create();
 
-        // $content = json_decode($request->getContent(), true);
+        $content = json_decode($request->getContent(), true);
 
-        // $locale = $content['locale'] ?? 'en_US';
-        // $page = $content['page'] ?? 1;
-        // $limit = $content['limit'];
-        // $userSeed = $content['seed'] ?? 0;
+        $language = $content['language'] ?? 'en_US';
+        $page = $content['page'] ?? 1;
+        $limit = $content['limit'] ?? 20;
+        $userSeed = $content['seed'] ?? 0;
+
+        $faker = Factory::create($language);
 
         // $compositeSeed = intval($userSeed) + $page;
 
-        // $faker->seed($compositeSeed);
-        //========================================================
-            $limit = 20;
-        //========================================================
         $data = [];
         for ($i = 0; $i < $limit; $i++) {
             $data[] = [
-                // 'number' => ($page - 1) * $limit + $i + 1,
-                // 'uuid' => $faker->uuid,
-                // 'name' => $faker->name,
-                // 'address' => $faker->address,
-                // 'phone' => $faker->phoneNumber
-
-                'number' => $i + 1,
+                'number' => ($page - 1) * $limit + $i + 1,
                 'ID' => $faker->uuid,
                 'name' => $faker->name,
                 'adress' => $faker->address,
