@@ -27,6 +27,9 @@ document.addEventListener("DOMContentLoaded", () => {
     if (event.target.value < 0) {
       inputNumberValue.value = 0;
     }
+    if (event.value === "") {
+      inputNumberValue.value = 0;
+    }
   });
 
   randomBtn.addEventListener("click", () => {
@@ -131,7 +134,7 @@ document.addEventListener("DOMContentLoaded", () => {
         if (i % 2 === 0) tableItem.classList.add("users__table-item--even");
 
         tableItem.innerHTML = `
-            <span class="user__number">${i + 1 + (options.page - 2) * options.limit}</span>
+            <span class="user__number">${i + 1}</span>
             <div class="users__table-item-text">${userDataWithErrors[i].ID}</div>
             <div class="users__table-item-text">${userDataWithErrors[i].name}</div>
             <div class="users__table-item-text">${userDataWithErrors[i].address}</div>
