@@ -10,6 +10,12 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 
 class DataGeneratorController extends AbstractController
 {
+
+    private $regionAlphabet = [
+        'en_US' => 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ',
+        'ru_RU' => 'абвгдеёжзийклмнопрстуфхцчшщъыьэюяАБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯ',
+        'de_DE' => 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZÄäÖöÜü',
+    ];
     #[Route('/data/generator', name: 'app_data_generator')]
     public function index(Request $request): JsonResponse
     {
@@ -17,18 +23,19 @@ class DataGeneratorController extends AbstractController
         $content = json_decode($request->getContent(), true);
 
         $language = $content['language'] ?? 'en_US';
-        $page = $content['page'] ?? 1;
         $limit = $content['limit'] ?? 20;
+        $userSeed = $content['seed'] ?? 0;
+        $page = $content['page'] ?? 1;
         $userSeed = $content['seed'] ?? 0;
 
         $faker = Factory::create($language);
 
-        // $compositeSeed = intval($userSeed) + $page;
+        $compositeSeed = intval($userSeed) + $page;
+        $faker->seed($compositeSeed);
 
         $data = [];
         for ($i = 0; $i < $limit; $i++) {
             $data[] = [
-                'number' => ($page - 1) * $limit + $i + 1,
                 'ID' => $faker->uuid,
                 'name' => $faker->name,
                 'adress' => $faker->address,
