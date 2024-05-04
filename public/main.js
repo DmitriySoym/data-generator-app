@@ -6,13 +6,18 @@ document.addEventListener("DOMContentLoaded", () => {
   const table = document.querySelector(".users__table");
   const changeRegion = document.querySelector(".region_select");
   let userData;
+  let userDataWithErrors;
 
   inputRangeValue.addEventListener("change", (event) => {
     inputNumberValue.value = event.target.value * 100;
+    errorsData.errorsPerRecord = inputRangeValue.value;
+    makeErrors();
   });
 
   inputNumberValue.addEventListener("change", (event) => {
     inputRangeValue.value = event.target.value / 100;
+    errorsData.errorsPerRecord = inputNumberValue.value;
+    makeErrors();
   });
 
   inputNumberValue.addEventListener("input", (event) => {
@@ -50,21 +55,27 @@ document.addEventListener("DOMContentLoaded", () => {
   };
   function fetchData() {
     console.log("Fetching data...");
-    return fetch("/data/generator", {
-      method: "POST",
-      body: JSON.stringify({
-        ...options,
-      }),
-      headers: {
-        "Content-type": "application/json; charset=UTF-8",
-      },
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        userData = data;
-        options.page++;
+    try {
+      return fetch("/data/generator", {
+        method: "POST",
+        body: JSON.stringify({
+          ...options,
+        }),
+        headers: {
+          "Content-type": "application/json; charset=UTF-8",
+        },
       })
-      .then(renderTable);
+        .then((response) => response.json())
+        .then((data) => {
+          userData = data;
+          errorsData.data = data;
+          options.page++;
+        })
+        .then(renderTable);
+    } catch (error) {
+      console.log(error);
+      alert("Something went wrong");
+    }
   }
 
   fetchData();
@@ -81,10 +92,12 @@ document.addEventListener("DOMContentLoaded", () => {
     table.innerHTML = "";
     options.page = 1;
     options.language = event.target.value;
+    inputRangeValue.value = 0;
+    inputNumberValue.value = 0;
     fetchData();
   });
 
-  async function renderTable() {
+  function renderTable() {
     if (userData === undefined) return;
     else {
       for (let i = 0; i < userData.length; i++) {
@@ -97,11 +110,64 @@ document.addEventListener("DOMContentLoaded", () => {
             <span class="user__number">${i + 1 + (options.page - 2) * options.limit}</span>
             <div class="users__table-item-text">${userData[i].ID}</div>
             <div class="users__table-item-text">${userData[i].name}</div>
-            <div class="users__table-item-text">${userData[i].adress}</div>
+            <div class="users__table-item-text">${userData[i].address}</div>
             <div class="users__table-item-text">${userData[i].phone}</div>
         `;
         table.appendChild(tableItem);
       }
     }
+  }
+
+  function renderTableWithErrors() {
+    if (errorsData.errorsPerRecord === 0) {
+      table.innerHTML = "";
+      renderTable();
+    } else {
+      table.innerHTML = "";
+      for (let i = 0; i < userDataWithErrors.length; i++) {
+        const tableItem = document.createElement("li");
+        tableItem.classList.add("users__table-item");
+
+        if (i % 2 === 0) tableItem.classList.add("users__table-item--even");
+
+        tableItem.innerHTML = `
+            <span class="user__number">${i + 1 + (options.page - 2) * options.limit}</span>
+            <div class="users__table-item-text">${userDataWithErrors[i].ID}</div>
+            <div class="users__table-item-text">${userDataWithErrors[i].name}</div>
+            <div class="users__table-item-text">${userDataWithErrors[i].address}</div>
+            <div class="users__table-item-text">${userDataWithErrors[i].phone}</div>
+        `;
+        table.appendChild(tableItem);
+      }
+    }
+  }
+
+  let errorsData = {
+    data: userData,
+    errorsPerRecord: inputRangeValue.value,
+    language: options.language,
+  };
+
+  errorsData = {
+    data: userData,
+    errorsPerRecord: inputRangeValue.value,
+    language: options.language,
+  };
+
+  function makeErrors() {
+    return fetch("/data/add-errors", {
+      method: "POST",
+      body: JSON.stringify({
+        ...errorsData,
+      }),
+      headers: {
+        "Content-type": "application/json; charset=UTF-8",
+      },
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        userDataWithErrors = data;
+      })
+      .then(renderTableWithErrors);
   }
 });
